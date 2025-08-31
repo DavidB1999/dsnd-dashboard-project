@@ -49,7 +49,7 @@ class Employee(QueryBase):
         # with an id equal to the id argument
         query_string = f"""
             SELECT 
-                CONCAT(first_name, ' ', last_name) AS employee_name
+                (first_name || ' ' || last_name) AS employee_name
             FROM {self.name} 
             WHERE employee_id == {id}
         """
