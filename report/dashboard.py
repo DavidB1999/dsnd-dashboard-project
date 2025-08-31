@@ -2,10 +2,10 @@ from fasthtml.common import *
 import matplotlib.pyplot as plt
 
 # Import QueryBase, Employee, Team from employee_events
-#### YOUR CODE HERE
+from employee_events import QueryBase, Employee, Team
 
 # import the load_model function from the utils.py file
-#### YOUR CODE HERE
+from report.utils import load_model
 
 """
 Below, we import the parent classes
@@ -24,86 +24,87 @@ from combined_components import FormGroup, CombinedComponent
 
 # Create a subclass of base_components/dropdown
 # called `ReportDropdown`
-#### YOUR CODE HERE
-    
+class ReportDropdown(Dropdown):
+            
     # Overwrite the build_component method
     # ensuring it has the same parameters
     # as the Report parent class's method
-    #### YOUR CODE HERE
+    def build_component(self, entity_id, model):
         #  Set the `label` attribute so it is set
-        #  to the `name` attribute for the model
-        #### YOUR CODE HERE
-        
+        #  to the `name` attribute for the model        
         # Return the output from the
         # parent class's build_component method
-        #### YOUR CODE HERE
+        self.label = model.name
+        
+        return self.build_component(entity_id, model)
     
     # Overwrite the `component_data` method
     # Ensure the method uses the same parameters
     # as the parent class method
-    #### YOUR CODE HERE
+    def component_data(self, entity_id, model):
         # Using the model argument
         # call the employee_events method
         # that returns the user-type's
         # names and ids
+        return model.names()
 
 
 # Create a subclass of base_components/BaseComponent
 # called `Header`
-#### YOUR CODE HERE
+class Header(BaseComponent):
 
     # Overwrite the `build_component` method
     # Ensure the method has the same parameters
     # as the parent class
-    #### YOUR CODE HERE
+    def build_component(self, entity_id, model):
         
         # Using the model argument for this method
         # return a fasthtml H1 objects
         # containing the model's name attribute
-        #### YOUR CODE HERE
+        return H1(model.name)
           
 
 # Create a subclass of base_components/MatplotlibViz
 # called `LineChart`
-#### YOUR CODE HERE
+class LineChart(MatplotlibViz):
     
     # Overwrite the parent class's `visualization`
     # method. Use the same parameters as the parent
-    #### YOUR CODE HERE
-    
+    def visualization(self, entity_id, model):
+     
 
         # Pass the `asset_id` argument to
         # the model's `event_counts` method to
         # receive the x (Day) and y (event count)
-        #### YOUR CODE HERE
+        event_counts = model.event_counts(entity_id)
         
         # Use the pandas .fillna method to fill nulls with 0
-        #### YOUR CODE HERE
+        event_counts.fillna(0, inplace=True)
         
         # User the pandas .set_index method to set
         # the date column as the index
-        #### YOUR CODE HERE
+        event_counts.set_index('event_date', inplace=True)
         
         # Sort the index
-        #### YOUR CODE HERE
+        event_counts.sort_index(inplace=True)
         
         # Use the .cumsum method to change the data
         # in the dataframe to cumulative counts
-        #### YOUR CODE HERE
+        event_counts = event_counts.cumsum()
         
         
         # Set the dataframe columns to the list
         # ['Positive', 'Negative']
-        #### YOUR CODE HERE
+        event_counts.columns = ['Positive',  'Negative']
         
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
-        #### YOUR CODE HERE
+        fig, axis = plt.subplots(nrows=2, ncols=2)
         
         # call the .plot method for the
         # cumulative counts dataframe
-        #### YOUR CODE HERE
+        event_counts.plot(ax=axis)
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -112,10 +113,12 @@ from combined_components import FormGroup, CombinedComponent
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        #### YOUR CODE HERE
+        self.set_axis_styling(axis, bordercolor='black', fontcolor='black')
         
         # Set title and labels for x and y axis
-        #### YOUR CODE HERE
+        axis.set_title("Cumulative Event Counts Over Time", fontsize=20)    
+        axis.set_xlabel("Date")   
+        axis.set_ylabel("Cumulative Event Count")
 
 
 # Create a subclass of base_components/MatplotlibViz
