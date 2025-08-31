@@ -28,7 +28,7 @@ class Employee(QueryBase):
         # for all employees in the database
         query_string = f"""
             SELECT
-                CONCAT(first_name, ' ', last_name) AS employee_name
+                (first_name || ' ' || last_name) AS employee_name
                 , employee_id
             FROM {self.name}
         """
