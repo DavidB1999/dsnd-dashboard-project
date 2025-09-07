@@ -11,7 +11,7 @@ from report.utils import load_model
 Below, we import the parent classes
 you will use for subclassing
 """
-from base_components import (
+from .base_components import (
     Dropdown,
     BaseComponent,
     Radio,
@@ -19,7 +19,7 @@ from base_components import (
     DataTable
     )
 
-from combined_components import FormGroup, CombinedComponent
+from .combined_components import FormGroup, CombinedComponent
 
 
 # Create a subclass of base_components/dropdown
@@ -231,21 +231,21 @@ class Report(CombinedComponent):
 
 
 # Initialize a fasthtml app 
-#### YOUR CODE HERE
+# app = FastHTML()
+app, route = fast_app()
 
 # Initialize the `Report` class
-#### YOUR CODE HERE
-
+report = Report()
 
 # Create a route for a get request
 # Set the route's path to the root
-#### YOUR CODE HERE
-
+@app.get('/')
+def home():
     # Call the initialized report
     # pass the integer 1 and an instance
     # of the Employee class as arguments
     # Return the result
-    #### YOUR CODE HERE
+    return report(userid=1, model=Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
