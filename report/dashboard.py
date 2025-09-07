@@ -100,11 +100,11 @@ class LineChart(MatplotlibViz):
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
-        fig, axis = plt.subplots(nrows=2, ncols=2)
+        fig, ax = plt.subplots(nrows=2, ncols=2)
         
         # call the .plot method for the
         # cumulative counts dataframe
-        event_counts.plot(ax=axis)
+        event_counts.plot(ax=ax)
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -113,40 +113,40 @@ class LineChart(MatplotlibViz):
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        self.set_axis_styling(axis, bordercolor='black', fontcolor='black')
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
         
         # Set title and labels for x and y axis
-        axis.set_title("Cumulative Event Counts Over Time", fontsize=20)    
-        axis.set_xlabel("Date")   
-        axis.set_ylabel("Cumulative Event Count")
+        ax.set_title("Cumulative Event Counts Over Time", fontsize=20)    
+        ax.set_xlabel("Date")   
+        ax.set_ylabel("Cumulative Event Count")
 
 
 # Create a subclass of base_components/MatplotlibViz
 # called `BarChart`
-#### YOUR CODE HERE
+class BarChart(MatplotlibViz):
 
     # Create a `predictor` class attribute
     # assign the attribute to the output
     # of the `load_model` utils function
-    #### YOUR CODE HERE
+    predictor = load_model()
 
     # Overwrite the parent class `visualization` method
     # Use the same parameters as the parent
-    #### YOUR CODE HERE
+    def visualization(self, entity_id, model):
 
         # Using the model and asset_id arguments
         # pass the `asset_id` to the `.model_data` method
         # to receive the data that can be passed to the machine
         # learning model
-        #### YOUR CODE HERE
+        data = model.model_data(self, id=entity_id)
         
         # Using the predictor class attribute
         # pass the data to the `predict_proba` method
-        #### YOUR CODE HERE
+        predictions = self.predictor.predict_proba(data)
         
         # Index the second column of predict_proba output
         # The shape should be (<number of records>, 1)
-        #### YOUR CODE HERE
+        preds = predictions[:, 1]
         
         
         # Below, create a `pred` variable set to
@@ -154,14 +154,13 @@ class LineChart(MatplotlibViz):
         #
         # If the model's name attribute is "team"
         # We want to visualize the mean of the predict_proba output
-        #### YOUR CODE HERE
             
         # Otherwise set `pred` to the first value
         # of the predict_proba output
-        #### YOUR CODE HERE
+        pred = preds[0] if model.name == 'team' else preds.mean()
         
         # Initialize a matplotlib subplot
-        #### YOUR CODE HERE
+        fig, ax = plt.subplots(nrows=2, ncols=2)
         
         # Run the following code unchanged
         ax.barh([''], [pred])
@@ -171,33 +170,33 @@ class LineChart(MatplotlibViz):
         # pass the axis variable
         # to the `.set_axis_styling`
         # method
-        #### YOUR CODE HERE
+        self.set_axis_styling(ax)
  
 # Create a subclass of combined_components/CombinedComponent
 # called Visualizations       
-#### YOUR CODE HERE
+class Visualizations(CombinedComponent):
 
     # Set the `children`
     # class attribute to a list
     # containing an initialized
     # instance of `LineChart` and `BarChart`
-    #### YOUR CODE HERE
+    children = [LineChart(), BarChart()]
+
 
     # Leave this line unchanged
     outer_div_type = Div(cls='grid')
             
 # Create a subclass of base_components/DataTable
 # called `NotesTable`
-#### YOUR CODE HERE
-
+class NotesTable(DataTable):
     # Overwrite the `component_data` method
     # using the same parameters as the parent class
-    #### YOUR CODE HERE
+    def component_data(self, entity_id, model):
         
         # Using the model and entity_id arguments
         # pass the entity_id to the model's .notes 
         # method. Return the output
-        #### YOUR CODE HERE
+        return model.notes(id=entity_id)
     
 
 class DashboardFilters(FormGroup):
@@ -220,14 +219,16 @@ class DashboardFilters(FormGroup):
     
 # Create a subclass of CombinedComponents
 # called `Report`
-#### YOUR CODE HERE
-
+class Report(CombinedComponent):
     # Set the `children`
     # class attribute to a list
     # containing initialized instances 
     # of the header, dashboard filters,
     # data visualizations, and notes table
-    #### YOUR CODE HERE
+    children = [Header(), DashboardFilters(), 
+                LineChart(), BarChart(),
+                NotesTable()]
+
 
 # Initialize a fasthtml app 
 #### YOUR CODE HERE
