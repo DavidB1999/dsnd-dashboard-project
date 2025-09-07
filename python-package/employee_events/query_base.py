@@ -63,3 +63,4 @@ class QueryBase(QueryMixin):
             INNER JOIN {self.name} USING({self.name}_id)
             WHERE {self.name}.{self.name}_id = {id}
             """
+        return self.pandas_query(query_string)
