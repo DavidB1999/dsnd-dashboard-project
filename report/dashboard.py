@@ -138,7 +138,7 @@ class BarChart(MatplotlibViz):
         # pass the `asset_id` to the `.model_data` method
         # to receive the data that can be passed to the machine
         # learning model
-        data = model.model_data(self, id=entity_id)
+        data = model.model_data(id=entity_id)
         
         # Using the predictor class attribute
         # pass the data to the `predict_proba` method
