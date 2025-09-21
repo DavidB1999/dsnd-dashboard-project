@@ -100,7 +100,7 @@ class LineChart(MatplotlibViz):
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
-        fig, ax = plt.subplots(nrows=2, ncols=2)
+        fig, ax = plt.subplots()
         
         # call the .plot method for the
         # cumulative counts dataframe
