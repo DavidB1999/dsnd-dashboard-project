@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 from employee_events import QueryBase, Employee, Team
 
 # import the load_model function from the utils.py file
-from report.utils import load_model
+from utils import load_model
 
 """
 Below, we import the parent classes
 you will use for subclassing
 """
-from .base_components import (
+from base_components import (
     Dropdown,
     BaseComponent,
     Radio,
@@ -19,7 +19,7 @@ from .base_components import (
     DataTable
     )
 
-from .combined_components import FormGroup, CombinedComponent
+from combined_components import FormGroup, CombinedComponent
 
 
 # Create a subclass of base_components/dropdown
@@ -36,7 +36,7 @@ class ReportDropdown(Dropdown):
         # parent class's build_component method
         self.label = model.name
         
-        return self.build_component(entity_id, model)
+        return super().build_component(entity_id, model)
     
     # Overwrite the `component_data` method
     # Ensure the method uses the same parameters
