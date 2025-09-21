@@ -160,7 +160,7 @@ class BarChart(MatplotlibViz):
         pred = preds[0] if model.name == 'team' else preds.mean()
         
         # Initialize a matplotlib subplot
-        fig, ax = plt.subplots(nrows=2, ncols=2)
+        fig, ax = plt.subplots()
         
         # Run the following code unchanged
         ax.barh([''], [pred])
