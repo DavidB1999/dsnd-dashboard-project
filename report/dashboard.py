@@ -270,14 +270,13 @@ def employee(employee_id: int):
 # an ID of `2`. 
 # parameterize the team ID 
 # to a string datatype
-#### YOUR CODE HERE
-
+@app.get('/team/{team_id}')
+def team(team_id: int):
     # Call the initialized report
     # pass the id and an instance
     # of the Team SQL class as arguments
     # Return the result
-    #### YOUR CODE HERE
-
+    return report(userid=team_id, model=Team())
 
 # Keep the below code unchanged!
 @app.get('/update_dropdown{r}')
