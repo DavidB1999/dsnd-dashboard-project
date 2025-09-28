@@ -214,7 +214,8 @@ class DashboardFilters(FormGroup):
             ),
         ReportDropdown(
             id="selector",
-            name="user-selection")
+            name="user-selection",
+            label_color='black')
         ]
     
 # Create a subclass of CombinedComponents
