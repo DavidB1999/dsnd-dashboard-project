@@ -254,13 +254,14 @@ def home():
 # an ID of `2`. 
 # parameterize the employee ID 
 # to a string datatype
-#### YOUR CODE HERE
+@app.get('/employee/{employee_id}')
+def employee(employee_id: int):
 
     # Call the initialized report
     # pass the ID and an instance
     # of the Employee SQL class as arguments
     # Return the result
-    #### YOUR CODE HERE
+    return report(userid=employee_id, model=Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
