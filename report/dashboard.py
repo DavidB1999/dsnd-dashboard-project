@@ -61,7 +61,7 @@ class Header(BaseComponent):
         # Using the model argument for this method
         # return a fasthtml H1 objects
         # containing the model's name attribute
-        return H1(model.name)
+        return H1(model.name.upper(), style="text-align:center; margin-top:20px; margin-bottom:40px;")
           
 
 # Create a subclass of base_components/MatplotlibViz
