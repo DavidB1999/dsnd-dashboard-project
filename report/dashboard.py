@@ -1,5 +1,6 @@
 from fasthtml.common import *
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 # Import QueryBase, Employee, Team from employee_events
 from employee_events import QueryBase, Employee, Team
@@ -34,7 +35,7 @@ class ReportDropdown(Dropdown):
         #  to the `name` attribute for the model        
         # Return the output from the
         # parent class's build_component method
-        self.label = model.name
+        self.label = model.name.capitalize()
         
         return super().build_component(entity_id, model)
     
@@ -46,7 +47,7 @@ class ReportDropdown(Dropdown):
         # call the employee_events method
         # that returns the user-type's
         # names and ids
-        return model.names()
+        return sorted(model.names(), key=lambda x: x[0])
 
 
 # Create a subclass of base_components/BaseComponent
@@ -61,7 +62,7 @@ class Header(BaseComponent):
         # Using the model argument for this method
         # return a fasthtml H1 objects
         # containing the model's name attribute
-        return H1(model.name)
+        return H1(model.name.upper(), style="text-align:center; margin-top:20px; margin-bottom:40px;")
           
 
 # Create a subclass of base_components/MatplotlibViz
@@ -104,8 +105,9 @@ class LineChart(MatplotlibViz):
         
         # call the .plot method for the
         # cumulative counts dataframe
-        event_counts.plot(ax=ax)
-        
+        event_counts.plot(ax=ax, kind='line', color=['#008543', '#bb1133'])
+        fig.autofmt_xdate()  # rotates + adjusts bottom margin nicely
+
         # pass the axis variable
         # to the `.set_axis_styling`
         # method
@@ -113,10 +115,14 @@ class LineChart(MatplotlibViz):
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
-        
+        # self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
+        # black on dark webpage looks bad so we go with white
+        self.set_axis_styling(ax, linestyle='dashed', linewidth=2)
+        # Rotate x-axis labels
+
+
         # Set title and labels for x and y axis
-        ax.set_title("Cumulative Event Counts Over Time", fontsize=20)    
+        ax.set_title("Cumulative Event Counts Over Time", fontsize=16)    
         ax.set_xlabel("Date")   
         ax.set_ylabel("Cumulative Event Count")
 
@@ -158,14 +164,30 @@ class BarChart(MatplotlibViz):
         # Otherwise set `pred` to the first value
         # of the predict_proba output
         pred = preds[0] if model.name == 'team' else preds.mean()
-        
+        # Pick a continuous color from 0 (green) to 1 (red)
+        cmap = cm.get_cmap('RdYlGn_r')  # reversed so low=green, high=red
+        color = cmap(pred)  # pred must be between 0 and 1
+
         # Initialize a matplotlib subplot
         fig, ax = plt.subplots()
         
         # Run the following code unchanged
-        ax.barh([''], [pred])
+        ax.barh([''], [pred], color=color)
+        # Add formatted label with background
+        ax.text(
+            pred + 0.02, 0,                  # slightly outside the bar
+            f"{pred:.1%}",                   # percentage format
+            va='center', ha='center',
+            fontsize=10, 
+            color=color,                # color from colormap
+            bbox=dict(facecolor="white",     # light background
+                    edgecolor="none", 
+                    boxstyle="round,pad=0.3", 
+                    alpha=0.9)             # minimally transparent
+        )
+
         ax.set_xlim(0, 1)
-        ax.set_title('Predicted Recruitment Risk', fontsize=20)
+        ax.set_title('Predicted Recruitment Risk', fontsize=16)
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -214,7 +236,8 @@ class DashboardFilters(FormGroup):
             ),
         ReportDropdown(
             id="selector",
-            name="user-selection")
+            name="user-selection",
+            label_color='black')
         ]
     
 # Create a subclass of CombinedComponents
@@ -254,13 +277,14 @@ def home():
 # an ID of `2`. 
 # parameterize the employee ID 
 # to a string datatype
-#### YOUR CODE HERE
+@app.get('/employee/{employee_id}')
+def employee(employee_id: int):
 
     # Call the initialized report
     # pass the ID and an instance
     # of the Employee SQL class as arguments
     # Return the result
-    #### YOUR CODE HERE
+    return report(userid=employee_id, model=Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
@@ -269,14 +293,13 @@ def home():
 # an ID of `2`. 
 # parameterize the team ID 
 # to a string datatype
-#### YOUR CODE HERE
-
+@app.get('/team/{team_id}')
+def team(team_id: int):
     # Call the initialized report
     # pass the id and an instance
     # of the Team SQL class as arguments
     # Return the result
-    #### YOUR CODE HERE
-
+    return report(userid=team_id, model=Team())
 
 # Keep the below code unchanged!
 @app.get('/update_dropdown{r}')
